@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from rest_framework import viewsets, filters
-from .models import Category
-from .serializers import CategorySerializer, CategoryProductSerializer
+from .models import Category, Brand, Firm, Product, Purchases
+from .serializers import CategorySerializer, CategoryProductSerializer, BrandSerializer, FirmSerializer, ProductSerializer, PurchasesSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import DjangoModelPermissions
+
+
+
 # Create your views here.
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -18,3 +21,35 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return CategoryProductSerializer
         return super().get_serializer_class()
 
+class BrandViewSet(viewsets.ModelViewSet):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['name']
+    permission_classes = [DjangoModelPermissions]
+
+
+class FirmViewSet(viewsets.ModelViewSet):
+    queryset = Firm.objects.all()
+    serializer_class = FirmSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['name']
+    permission_classes = [DjangoModelPermissions]    
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_fields = ['category', 'brand']
+    search_fields = ['name']
+    permission_classes = [DjangoModelPermissions]    
+
+
+class PurchasesViewSet(viewsets.ModelViewSet):
+    queryset = Purchases.objects.all()
+    serializer_class = PurchasesSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend)
+    filterset_fields = [ 'product', 'firm']
+    search_fields = ['firm']
+    permission_classes = [DjangoModelPermissions]
